@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        PreLoadingLayout preLoadingLayout = new PreLoadingLayout(this);
+        PreLoadingLayout preLoadingLayout = new PreLoadingLayout(this, 2);
 
         mRecyclerView.setLayoutManager(preLoadingLayout);
         mRecyclerView.setAdapter(mAdapter);
@@ -66,5 +66,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadAnswers();
     }
 }

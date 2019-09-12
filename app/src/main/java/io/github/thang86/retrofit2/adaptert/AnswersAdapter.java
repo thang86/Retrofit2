@@ -5,10 +5,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import io.github.thang86.retrofit2.R;
 import io.github.thang86.retrofit2.model.Item;
 
 public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHolder> {
@@ -17,15 +25,18 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
     private Context mContext;
     private PostItemListener mItemListener;
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView titleTv;
+        public TextView titleName;
+        public TextView tvId;
+        public ImageView urlAvatar;
         PostItemListener mItemListener;
 
         public ViewHolder(View itemView, PostItemListener postItemListener) {
             super(itemView);
-            titleTv = (TextView) itemView.findViewById(android.R.id.text1);
-
+            titleName = (TextView) itemView.findViewById(R.id.tv_name);
+            tvId = (TextView) itemView.findViewById(R.id.tv_id);
+            urlAvatar = (ImageView) itemView.findViewById(R.id.iv_avatar);
             this.mItemListener = postItemListener;
             itemView.setOnClickListener(this);
         }
@@ -51,18 +62,58 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View postView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+        View postView = inflater.inflate(R.layout.item_layout, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(postView, this.mItemListener);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(AnswersAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final AnswersAdapter.ViewHolder holder, int position) {
 
-        Item item = mItems.get(position);
-        TextView textView = holder.titleTv;
-        textView.setText(item.getOwner().getDisplayName());
+        final Item item = mItems.get(position);
+       /* Picasso.with(mContext)
+                .load(item.getOwner().getProfileImage())
+                .fit()
+                .centerCrop()
+                .into(holder.urlAvatar);*/
+        Picasso.with(mContext)
+                .load(item.getOwner().getProfileImage())
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .memoryPolicy (MemoryPolicy.NO_CACHE)
+                .fit()
+                .centerCrop()
+                .into(holder.urlAvatar, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        //
+
+                    }
+
+                    @Override
+                    public void onError() {
+                        Picasso.with(mContext)
+                                .load(item.getOwner().getProfileImage())
+                                .fit()
+                                .centerCrop()
+                                .memoryPolicy (MemoryPolicy.NO_CACHE)
+                                .error(android.R.drawable.dark_header)
+                                .into(holder.urlAvatar, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        //
+
+                                    }
+
+                                    @Override
+                                    public void onError() {
+                                        Toast.makeText(mContext,"Could not fetch image",Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                    }
+                });
+        holder.titleName.setText(item.getOwner().getDisplayName());
+        holder.tvId.setText(item.getOwner().getUserId().toString());
     }
 
     @Override

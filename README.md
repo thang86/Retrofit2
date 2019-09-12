@@ -13,6 +13,13 @@ Khai báo dependency
  
 // recyclerview 
  implementation 'com.android.support:recyclerview-v7:27.1.1'
+ 
+ // okhttp
+ implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
+ implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+ 
+ // picaso
+ implementation 'com.squareup.picasso:picasso:2.5.2'
 ```
   Tiếp theo để thực hiện cần quyền INTERNET trong AndroidManifest.xml .
 ```sh
@@ -26,7 +33,8 @@ Khai báo dependency
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".utils.Global">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
