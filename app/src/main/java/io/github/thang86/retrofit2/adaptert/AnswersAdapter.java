@@ -80,13 +80,12 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
         Picasso.with(mContext)
                 .load(item.getOwner().getProfileImage())
                 .networkPolicy(NetworkPolicy.OFFLINE)
-                .memoryPolicy (MemoryPolicy.NO_CACHE)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .fit()
                 .centerCrop()
                 .into(holder.urlAvatar, new Callback() {
                     @Override
                     public void onSuccess() {
-                        //
 
                     }
 
@@ -96,18 +95,17 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.ViewHold
                                 .load(item.getOwner().getProfileImage())
                                 .fit()
                                 .centerCrop()
-                                .memoryPolicy (MemoryPolicy.NO_CACHE)
+                                .memoryPolicy(MemoryPolicy.NO_CACHE)
                                 .error(android.R.drawable.dark_header)
                                 .into(holder.urlAvatar, new Callback() {
                                     @Override
                                     public void onSuccess() {
                                         //
-
                                     }
 
                                     @Override
                                     public void onError() {
-                                        Toast.makeText(mContext,"Could not fetch image",Toast.LENGTH_LONG).show();
+                                        Toast.makeText(mContext, "Could not fetch image", Toast.LENGTH_LONG).show();
                                     }
                                 });
                     }

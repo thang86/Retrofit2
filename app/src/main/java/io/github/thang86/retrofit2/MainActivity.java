@@ -1,5 +1,6 @@
 package io.github.thang86.retrofit2;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -26,10 +27,14 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private AnswerService mAnswerService;
 
+    private ProgressDialog progressDialog = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        progressDialog = new ProgressDialog(MainActivity.this);
         mAnswerService = ApiUtils.getAnswerService();
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_answers);
         mAdapter = new AnswersAdapter(this, new ArrayList<Item>(0), new AnswersAdapter.PostItemListener() {
@@ -45,16 +50,19 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(preLoadingLayout);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
-
+        showProgressDialog();
         loadAnswers();
     }
 
     private void loadAnswers() {
+
         mAnswerService.getAnswers().enqueue(new Callback<AnswersResponse>() {
             @Override
             public void onResponse(Call<AnswersResponse> call, Response<AnswersResponse> response) {
+
                 Log.d(TAG, " - " + response.body());
                 if (response.isSuccessful()) {
+                    hideProgressDialog();
                     mAdapter.updateAnswers(response.body().getItems());
                     Log.d(TAG, "posts loaded from API");
                 }
@@ -63,9 +71,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<AnswersResponse> call, Throwable t) {
                 Log.d(TAG, "error loading from API");
+                hideProgressDialog();
 
             }
         });
+    }
+
+    private void showProgressDialog() {
+        progressDialog.setMessage("Please Wait");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        progressDialog.hide();
     }
 
     @Override
